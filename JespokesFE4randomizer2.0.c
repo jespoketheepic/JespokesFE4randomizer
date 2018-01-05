@@ -41,8 +41,8 @@ myself delete it outright, in case some slim chance i though of a way to fix it,
 #define SELLHOLYWEAPON 0x4B2E7  /* The location of the byte to set to 00 so we can sell holyweapons */
 #define INHERITHOLYWEAPON 0x7AB6C   /* The location of the byte to set to 05 so all holyweapons can be inherited */
 #define SEIZEFIX1 0x5E43C       /* Change to 22 33 A3 84 to fix seizing */
-#define SEIZEFIX2 0x5E641       /* Change to 01 */
-#define SEIZEFIX3 0x5E646       /* Change to 19 */
+#define SEIZEFIX2 0x5E441       /* Change from 06 to 01 */
+#define SEIZEFIX3 0x5E446       /* Change from 2C to 19 */
 #define SWORDSKILLINHERIT 0x7A976   /* The position in the rom of the first sword skill inheritance byte. Set to FF.*/
 #define INHERITSIZE 0x03        /* The distance to offset to get to the next character's inheritance */
 #define INHERITCOUNT 25         /* I don't know why there are 25 inheritance adresses when there are way fewer kids than that */
