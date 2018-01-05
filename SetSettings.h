@@ -11,20 +11,23 @@ void SetSettings(Settings *settings)
     do  /* Prompt difficulty */
     {
       printf("\nThis randomizer has a tendency to make the game easier, especially when using the interesting options like many skills and holy bloods.\n"
-      "So here is a chance to up the difficulty by nerfing your units. You will get a chance to change your choice at the end. Enter:\n"
+      "So here is a chance to up the difficulty by nerfing your units. You will get a chance to change your choice at the end.\n"
+      "Enter a number for how many times you want to take 10%% growth and 1 base stat point off your units.\n"
       "0 for   -0  growthtotal               \"The bad spreads are compensation enough. Im not taking the crazy options anyway.\"\n"
-      "1 for  -20  growthtotal and  -2 base  \"A little hit is enough.\"\n"
-      "2 for  -40  growthtotal and  -4 base  \"The middle option.\"\n"
-      "3 for  -60  growthtotal and  -6 base  \"This brings characters with no holy blood that gained Major about back on par, before the randomizer makes them worse.\"\n"
-      "4 for  -80  growthtotal and  -8 base  \"Now we are taking off some serious stuff.\"\n"
-      "5 for -100  growthtotal and -10 base  \"I don't know where to stop, this is pretty intense... Proceed with caution.\n"
-      "*These are only applied if you randomize growths and bases respecively\n"); /*NOTE: Fix that*/
-      charbuffer = getchar();
+      "2 for  -20  growthtotal and  -2 base  \"A little hit is enough.\"\n"
+      "4 for  -40  growthtotal and  -4 base  \"The middle option.\"\n"
+      "6 for  -60  growthtotal and  -6 base  \"This brings characters with no holy blood that gained Major about back on par, before the randomizer makes them worse.\"\n"
+      "8 for  -80  growthtotal and  -8 base  \"Now we are taking off some serious stuff.\"\n"
+      "10 for -100 growthtotal and -10 base  \"... Proceed with caution.\n"
+      "Or anything inbetween, or all the way up to 20!!!\n"
+      "*These are only applied if you randomize growths and bases respecively\n"
+      "*(Don't actually go up to 20, your units will have almost 0%% growth and class base bases)");
+      fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(charbuffer != '0' && charbuffer != '1' && charbuffer != '2' && charbuffer != '3' && charbuffer != '4' && charbuffer != '5');
+    while(intbuffer < 0 || intbuffer > 20);
 
-    settings->difficulty = charbuffer;
+    settings->difficulty = intbuffer;
     
     do  /* Prompt class */
     {

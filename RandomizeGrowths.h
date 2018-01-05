@@ -1,6 +1,6 @@
 
 /* Function for mixing up growths */
-void RandomizeGrowths(unsigned char *entrybuffer, unsigned char diffsetting)
+void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting)
 {
   /* entrybuffer[0-7] here correspond to HP, Str, Mag, Skl, Spd, Def, Res, Lck */
   signed int growthtotal = 0, rntotal = 0, i;
@@ -19,7 +19,7 @@ void RandomizeGrowths(unsigned char *entrybuffer, unsigned char diffsetting)
   }
   
   /* Take off points for difficulty. -0x30 makes an ASCII number into its int value. Since we divided by 5, 4 means 20% */
-  growthtotal -= (diffsetting - 0x30) * 4;
+  growthtotal -= diffsetting*10;
   if(growthtotal < 0)
   {
     growthtotal = 0;

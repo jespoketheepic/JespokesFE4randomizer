@@ -1,6 +1,6 @@
 
 /* Function for mixing up base stats */
-void RandomizeBases(unsigned char *entrybuffer, unsigned char diffsetting)
+void RandomizeBases(unsigned char *entrybuffer, int diffsetting)
 {
   /* entrybuffer[0-7] here correspond to HP, Str, Mag, Skl, Spd, Def, Res, Lck */
   signed int basetotal = 0, rntotal = 0, i;
@@ -20,7 +20,7 @@ void RandomizeBases(unsigned char *entrybuffer, unsigned char diffsetting)
   }
   
   /* Take off points for difficulty. -0x30 makes an ASCII number into its int value.*/
-  basetotal -= (diffsetting - 0x30)*2;
+  basetotal -= diffsetting;
   if(basetotal < 0)
   {
     basetotal = 0;

@@ -64,14 +64,8 @@ typedef struct Weapons
 
 typedef struct Settings
 {
-  unsigned char difficulty;  /* This randomizer has a tendency to make the game easier, especially when using the interesting options like many skills and holy bloods.
-                                So pick how much to take off growth total to compensate
-                                0 for 0%, "the bad spreads are compensation enough. Im not taking the crazy options anyway."
-                                1 for 40%, "A minor holy blood's worth is enough"
-                                2 for 80%, "This brings characters with no holy blood that gained Major back on par, before randomizer badness and skills."
-                                3 for 120%, "Now we are taking off some serious stuff."
-                                4 for 160%, "Relying a lot on bases and skills at this point!"
-                                5 for 200%, "I don't know where to stop, this is pretty intense... Proceed with caution."*/
+  int difficulty;               /* This randomizer has a tendency to make the game easier, especially when using the interesting options like many skills and holy bloods.
+                                So pick how much to take off growth total to compensate*/
   unsigned char class;       /* 0 for no, 1 to put children's weapons in spoilerfree log so you can plan inheritance, 2 for surprise me! */
   unsigned char promotion;   /* 0 for the expected, 1 for anything that retains your weapon ranks (No mount downgrades), 2 for complete madness.
                                 *If you didn't randomize classes, 0 won't change anything either.
@@ -108,8 +102,8 @@ void RandomizeClass(unsigned char *class, FILE *log);
 int CharInArray(unsigned char id, const unsigned char *list);
 void PrintClassName(unsigned char id, FILE *file);
 unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, int offset);
-void RandomizeBases(unsigned char *entrybuffer, unsigned char diffsetting);
-void RandomizeGrowths(unsigned char *entrybuffer, unsigned char diffsetting);
+void RandomizeBases(unsigned char *entrybuffer, int diffsetting);
+void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting);
 void PrintStats(FILE *log, unsigned char *entrybuffer, unsigned char basesetting, unsigned char growthsetting, FILE *rom, int header, unsigned char class, unsigned char *blood);
 void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, unsigned char pursuitsetting, FILE *log);
 void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, char bloodsetting, FILE *log);
