@@ -235,6 +235,7 @@ int main()
   "*The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warnings:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n"
   "Press Enter to continue.\n"); /* NOTE: Add stuff as it is added */
   Flushline(stdin);
@@ -257,16 +258,18 @@ int main()
   "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warnings:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   fprintf(superlog, "Changes that are made regardless of settings:\n"
   "* All skills are usable and inheritable by all classes\n"
   "* Holy weapons can be sold and bought. (They still won't display a price)\n"
   "* Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood. If his parents have these, the randomizer will give him random other holybloods instead.\n"
   "* A few enemies were moved in chapter 7 to give Shannan and Patty/Daisy some hope of survival. If you are particularly unlucky you may still need to make more edits to make it possible.\n"
-  "*Various minor changes to accomodate non-flying Altenna.\n"
+  "* Various minor changes to accomodate non-flying Altenna.\n"
   "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warning:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   
   /* Save the unique stuff in character's 1st inventory slot from being randomized away, by swapping them with junk from the shop. */
