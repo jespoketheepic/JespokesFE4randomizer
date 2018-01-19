@@ -18,8 +18,8 @@ void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting)
     rntotal += entrybuffer[i];
   }
   
-  /* Take off points for difficulty. -0x30 makes an ASCII number into its int value. Since we divided by 5, 4 means 20% */
-  growthtotal -= diffsetting*10;
+  /* Take off points for difficulty.  Since we divided by 5, *4 means *20 */
+  growthtotal -= diffsetting*4;
   if(growthtotal < 0)
   {
     growthtotal = 0;
@@ -28,7 +28,6 @@ void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting)
   for(i = 0; i < 8; i++)
   {
     /* Random number divided by rntotal is how big a slice of the basetotal pie that stat gets */
-    /* */
     entrybuffer[i] = (entrybuffer[i]*growthtotal)/rntotal;
     entrybuffer[i] *= 5;
   }

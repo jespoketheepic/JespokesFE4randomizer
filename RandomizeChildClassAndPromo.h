@@ -10,7 +10,7 @@ void PrintWeaponRanks(int *weaponrankbuffer, FILE *log);
 
 void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char promosetting, FILE *names, FILE *log, FILE *superlog)
 {
-  unsigned char classbuffer, weaponID, gender, promo;
+  unsigned char classbuffer, weaponID, gender;
   unsigned char spareweapons[] = {1,2};
   int weaponrankbuffer[9];    /* Sword, Lance, Axe, Bow, Fire, Thunder, Wind, Light, Staff */
   int i;
@@ -35,21 +35,15 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char 
   classbuffer = fgetc(rom);
   fseek(rom, SELIPHCLASSLOC + header + 8 , SEEK_SET);
   weaponID = fgetc(rom);
+  fseek(rom, SELIPHCLASSLOC + header + 7, SEEK_SET);
+  gender = fgetc(rom);  
   if(classsetting > '0')
   {
-    RandomizeClass(&classbuffer, log);
+    RandomizeClass(&classbuffer, gender, log);
     MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
   }
   /* RandomizePromotion should be called either way because it is needed on class randomizing too, and this function is never called without either one or the other*/
-  promo = RandomizePromotion(rom, header, promosetting, log, classbuffer, FIRSTGEN);
-  
-  /* Edit gender if neccessary */
-  fseek(rom, SELIPHCLASSLOC + header + 7, SEEK_SET);
-  gender = fgetc(rom);
-  GenderMatch(&gender, classbuffer, promo);
-  fseek(rom, SELIPHCLASSLOC + header + 7, SEEK_SET);
-  fputc(gender, rom);
-  
+  RandomizePromotion(rom, header, promosetting, log, classbuffer, gender, FIRSTGEN);
   fseek(rom, SELIPHCLASSLOC + header, SEEK_SET);
   fputc(classbuffer, rom);
   
@@ -74,20 +68,14 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char 
   classbuffer = fgetc(rom);
   fseek(rom, LEIFCLASSLOC + header + 8, SEEK_SET);
   weaponID = fgetc(rom);
-  if(classsetting > '0')
-  {
-    RandomizeClass(&classbuffer, log);
-    MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
-  }
-  RandomizePromotion(rom, header, promosetting, log, classbuffer, FIRSTGEN + 4);
-  
-  /* Edit gender if neccessary */
   fseek(rom, LEIFCLASSLOC + header + 7, SEEK_SET);
   gender = fgetc(rom);
-  GenderMatch(&gender, classbuffer, promo);
-  fseek(rom, LEIFCLASSLOC + header + 7, SEEK_SET);
-  fputc(gender, rom);
-  
+  if(classsetting > '0')
+  {
+    RandomizeClass(&classbuffer, gender, log);
+    MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
+  }
+  RandomizePromotion(rom, header, promosetting, log, classbuffer, gender, FIRSTGEN + 4);
   fseek(rom, LEIFCLASSLOC + header, SEEK_SET);
   fputc(classbuffer, rom);
   
@@ -112,20 +100,14 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char 
   classbuffer = fgetc(rom);
   fseek(rom, ALTENNACLASSLOC + header + 8, SEEK_SET);
   weaponID = fgetc(rom);
-  if(classsetting > '0')
-  {
-    RandomizeClass(&classbuffer, log);
-    MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
-  }
-  RandomizePromotion(rom, header, promosetting, log, classbuffer, FIRSTGEN + 19);
-  
-  /* Edit gender if neccessary */
   fseek(rom, ALTENNACLASSLOC + header + 7, SEEK_SET);
   gender = fgetc(rom);
-  GenderMatch(&gender, classbuffer, promo);
-  fseek(rom, ALTENNACLASSLOC + header + 7, SEEK_SET);
-  fputc(gender, rom);
-  
+  if(classsetting > '0')
+  {
+    RandomizeClass(&classbuffer, gender, log);
+    MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
+  }
+  RandomizePromotion(rom, header, promosetting, log, classbuffer, gender, FIRSTGEN + 19);
   fseek(rom, ALTENNACLASSLOC + header, SEEK_SET);
   fputc(classbuffer, rom);
   
@@ -152,20 +134,14 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char 
     classbuffer = fgetc(rom);
     fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 8, SEEK_SET);
     weaponID = fgetc(rom);
+    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 7, SEEK_SET);
+    gender = fgetc(rom);    
     if(classsetting > '0')
     {
-      RandomizeClass(&classbuffer, log);
+      RandomizeClass(&classbuffer, gender, log);
       MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
     }
-    RandomizePromotion(rom, header, promosetting, log, classbuffer, FIRSTGEN + 25 + i);
-    
-    /* Edit gender if neccessary */
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 7, SEEK_SET);
-    gender = fgetc(rom);
-    GenderMatch(&gender, classbuffer, promo);
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 7, SEEK_SET);
-    fputc(gender, rom);
-  
+    RandomizePromotion(rom, header, promosetting, log, classbuffer, gender, FIRSTGEN + 25 + i);
     fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i), SEEK_SET);
     fputc(classbuffer, rom);
     

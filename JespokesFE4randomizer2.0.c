@@ -21,7 +21,7 @@ myself delete it outright, in case some slim chance i though of a way to fix it,
 
 #define UNPROMOTEDCLASSCOUNT 22     /* The number of elements in the "unpromoted[]" array excluding the \0 at the end since it is only there so i can read it as a string (SORRY!!!)*/
 #define PROMOTEDCLASSCOUNT 20       /* The number of elements in the "promoted[]" array excluding the \0 at the end since it is only there so i can read it as string (SORRY!!!)*/
-#define MAXPROMOOPTIONS 10          /* The max number of promotions the randomizer can chose from without errors when not picking from the full pool. */
+#define MAXPROMOOPTIONS 15          /* The max number of promotions the randomizer can chose from without errors when not picking from the full pool. */
 
 #define HOLYBLOOD 0x389E5       /* The position in the rom where the first holy blood entry starts (its first growth bonus) */
 #define HOLYBLOODSIZE 0x10      /* The distance to offset to get to the same place in the next holy blood entry */
@@ -45,8 +45,9 @@ myself delete it outright, in case some slim chance i though of a way to fix it,
 #define SEIZEFIX3 0x5E446       /* Change from 2C to 19 */
 #define SWORDSKILLINHERIT 0x7A976   /* The position in the rom of the first sword skill inheritance byte. Set to FF.*/
 #define INHERITSIZE 0x03        /* The distance to offset to get to the next character's inheritance */
-#define INHERITCOUNT 25         /* I don't know why there are 25 inheritance adresses when there are way fewer kids than that */
+#define INHERITCOUNT 0x27         /* I don't know why there are 25 inheritance adresses when there are way fewer kids than that */
 #define JULIUSSKILLS 0x3D15C    /* Location of Julius' skill slot 1 */
+#define JULIUSDEF 0x3D146       
 #define WEAPONENTRY 0x3F488     /* Location of the 0th weapon entry. (No ID 0.) Add a weapon ID from a character entry to get to the specific one */
 
 #define WEAPONSTATS 0x3EAEF     /* Location of the Might of the Iron Sword */
@@ -73,18 +74,17 @@ typedef struct Settings
                                 *If you pick option 1, be prepared to get a LOT of Falcon Knights and Paladins 
                                 *For option 1, Master Knight is not included in the regular pool, except for Prince and Princess (Who can still become many other things!), but every character has a 5% chance of becoming a Master Knight. */
   unsigned char bases;       /* 0 for no, 1 for yes */
-  unsigned char growths;     /* 0 for no, 1 for yes, 2 for adding points gone to Magic on a non-magic class to HP */
+  unsigned char growths;     /* 0 for no, 1 for yes */
 /*  unsigned char classbases;*/  /* 0 for no, 1 for yes */
   unsigned char skills;      /* 0 for leaving skills alone, 11 everyone gets 1 skill, 12 everyone gets 2 skills, 13 everyone gets 3 skills 
                                 *Pursuit will appear more often than other skills
                                 *Sword skills are usable by all weapons and classes */
-  unsigned char pursuit;     /* 0 for everyone gets Pursuit, 1 for 1x as often as others, etc up to 9 */
+  int pursuit;               /* 0 for everyone gets Pursuit, 1 for 1x as often as others, etc up to 9 */
   unsigned char bloodalloc;  /* 0 for no, 1 for everyone gets a Major, 2 for everyone gets a Major and a Minor */
-  unsigned char bloodbonus;  /* 0 for no, 1 20% to one stat 10% to another, 2 30% spread in chunks of 10%, 3 30% in one stat, 
+  int bloodbonus;            /* 0 for no, 1 20% to one stat 10% to another, 2 30% spread in chunks of 10%, 3 30% in one stat, 
                                 *all bloods also give 20% HP */
   unsigned char weaponbonus; /* 0 for keep, 1 for 20 to one stat 10 to another, 2 for 30 points spread in chunks of 10
-                                *Naga gets double bonuses 
-                                *No Str on tomes or Mag on weapons. No HP or Luck on either. */
+                                *Naga gets +50 bonus*/
   /*unsigned char badstats;*/   /* 0 for no, 1 for adding luck to HP, 2 for adding Str/Mag to HP, 3 for both */ /*NOTE: scrapped for not feeling in the randomizer spirit */
   
   Weapons *weapons;
@@ -97,24 +97,27 @@ void ItemShuffle(FILE *rom, unsigned char header);
 void ByteSwap(FILE *file, int loc1, int loc2);
 void Flushline(FILE *file);
 void FixedStuff(FILE *rom, int header);
-void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log);
-void RandomizeClass(unsigned char *class, FILE *log);
+void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log, FILE *superlog);
+void RandomizeClass(unsigned char *class, unsigned char gender, FILE *log);
 int CharInArray(unsigned char id, const unsigned char *list);
 void PrintClassName(unsigned char id, FILE *file);
-unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, int offset);
+unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, unsigned char gender, int offset);
 void RandomizeBases(unsigned char *entrybuffer, int diffsetting);
 void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting);
 void PrintStats(FILE *log, unsigned char *entrybuffer, unsigned char basesetting, unsigned char growthsetting, FILE *rom, int header, unsigned char class, unsigned char *blood);
-void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, unsigned char pursuitsetting, FILE *log);
+void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, int pursuitsetting, FILE *log);
 void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, char bloodsetting, FILE *log);
-void RandomizeBloodBonus(FILE *rom, int header, unsigned char BBsetting, FILE *log, FILE *superlog);
+void RandomizeBloodBonus(FILE *rom, int header, int BBsetting, FILE *log, FILE *superlog);
 void RandomizeWeaponBonus(FILE *rom, int header, unsigned char WBsetting, FILE *log);
 void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log);
 int ClassWeaponRanks(int *weaponrankbuffer, unsigned char class);
 void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char promosetting, FILE *names, FILE *log, FILE *superlog);
 void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weaponID, unsigned char *spareweapons);
-int GenderMatch(unsigned char *gender, unsigned char class, unsigned char promoclass);
+int GenderMatch(unsigned char gender, unsigned char class);
 void RandomizeWeapons(FILE *rom, int header, Weapons *weapons);
+void ApplyDifficulty(unsigned char *entrybuffer, int difficulty, int scale);
+void SwordSkillsPatch(FILE *rom, int header);
+void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned char *seliphblood, int parent, FILE *superlog);
 
 
 /* Include functions */
@@ -141,6 +144,9 @@ void RandomizeWeapons(FILE *rom, int header, Weapons *weapons);
 #include "MatchWeapon.h"
 #include "GenderMatch.h"
 #include "RandomizeWeapons.h"
+#include "ApplyDifficulty.h"
+#include "SwordSkillsPatch.h"
+#include "SeliphBlood.h"
 
 
 int main()
@@ -157,7 +163,7 @@ int main()
   
   /* Prompt for file */
   printf("Welcome to Jespoke's FE4 randomizer!\n"
-  "This randomizer is tested on a raw ROM, but should be compatible with translation patches.\n"
+  "This randomizer is tested on a raw ROM and with the Project Naga translation patch.\n"
   "It supports both headered and unheadered ROMs.\n"
   "You should probably make this window bigger, there is gonna be a lot of text.\n"
   "Enter the name of your ROM (remember the file extention)(no names longer than 40 characters)\n");
@@ -223,8 +229,13 @@ int main()
   "*Sword skills can be used and inherited by anyone\n"
   "*Holy weapons can be sold and bought\n"
   "*Normally non-playable classes are left out of class randomizing just in case they break something. Plain Mage is left out because it is just a strictly worse Bard\n"
-  "*Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood.\n"
-  "*The final boss no longer has Wrath.\n"
+  "*Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood. If his parents have these, the randomizer will give him random other holybloods instead.\n"
+  "* A few enemies were moved in chapter 7 to give Shannan and Patty/Daisy some hope of survival. If you are particularly unlucky you may still need to make more edits to make it possible.\n"
+  "*Various minor changes to accomodate non-flying Altenna.\n"
+  "*The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
+  "Warnings:\n"
+  "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n"
   "Press Enter to continue.\n"); /* NOTE: Add stuff as it is added */
   Flushline(stdin);
   
@@ -239,14 +250,24 @@ int main()
   FixedStuff(rom, header);
   fprintf(log, "Changes that are made regardless of settings:\n"
   "* All skills are usable and inheritable by all classes\n"
-  "* Holy weapons can be sold and bought. (They still won't display a price)\n"
-  "* Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood.\n"
-  "* The final boss no longer has Wrath.\n\n");
+  "* Holy weapons can be sold and bought. (They won't always display a price)\n"
+  "* Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood. If his parents have these, the randomizer will give him random other holybloods instead.\n"
+  "* A few enemies were moved in chapter 7 to give Shannan and Patty/Daisy some hope of survival. If you are particularly unlucky you may still need to make more edits to make it possible.\n"
+  "* Various minor changes to accomodate non-flying Altenna.\n"
+  "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
+  "Warnings:\n"
+  "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   fprintf(superlog, "Changes that are made regardless of settings:\n"
   "* All skills are usable and inheritable by all classes\n"
   "* Holy weapons can be sold and bought. (They still won't display a price)\n"
-  "* Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood.\n"
-  "* The final boss no longer has Wrath.\n\n");
+  "* Seliph can not inherit Thrud, Forseti, Blagi, Hezul or Loptyr blood. If his parents have these, the randomizer will give him random other holybloods instead.\n"
+  "* A few enemies were moved in chapter 7 to give Shannan and Patty/Daisy some hope of survival. If you are particularly unlucky you may still need to make more edits to make it possible.\n"
+  "*Various minor changes to accomodate non-flying Altenna.\n"
+  "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
+  "Warning:\n"
+  "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
+  "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   
   /* Save the unique stuff in character's 1st inventory slot from being randomized away, by swapping them with junk from the shop. */
   if(settings->class)
@@ -269,12 +290,17 @@ int main()
   }*/
   
   /* Randomize the characters! */
-  RandomizeCharactersG1(rom, settings, entrybuffer, header, names, log);
+  RandomizeCharactersG1(rom, settings, entrybuffer, header, names, log, superlog);
   RandomizeCharactersG2Fix(rom, settings, entrybuffer, header, names, log);
   RandomizeChildClassAndPromo(rom, header, settings->class, settings->promotion, names, log, superlog);
   
   /* Randomize Weapons */
   RandomizeWeapons(rom, header, settings->weapons);
+  
+  printf("\nThanks to the various Serenesforest users who found most of the obscure ROM adresses this program edits. Particular thanks to Lamia and the other posters in \"Lamia's FE4 stuff\"\n"
+  "Thanks to the people behind the FE4 Binary tools for making the Sword Skills patch.\n"
+  "Press Enter to finish.");
+  getchar();
   
   free(settings);
   free(settings->weapons);

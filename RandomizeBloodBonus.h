@@ -1,11 +1,11 @@
 
 /* Prototypes */
-void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigned char *growthbuffer, char *textbuffer, char BBsetting, int i);
-void BloodBonus(FILE *rom, int header, unsigned char *growthbuffer, char BBsetting, int i);
+void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigned char *growthbuffer, char *textbuffer, int BBsetting, int i);
+void BloodBonus(FILE *rom, int header, unsigned char *growthbuffer, int BBsetting, int i);
 void PrintGrowthLine(FILE *log, unsigned char *growthbuffer);
 
 
-void RandomizeBloodBonus(FILE *rom, int header, unsigned char BBsetting, FILE *log, FILE *superlog)
+void RandomizeBloodBonus(FILE *rom, int header, int BBsetting, FILE *log, FILE *superlog)
 {
   unsigned char growthbuffer[8];
   char textbuffer[10];
@@ -61,7 +61,7 @@ void RandomizeBloodBonus(FILE *rom, int header, unsigned char BBsetting, FILE *l
   return;
 }
 
-void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigned char *growthbuffer, char *textbuffer, char BBsetting, int i)
+void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigned char *growthbuffer, char *textbuffer, int BBsetting, int i)
 {
   BloodBonus(rom, header, growthbuffer, BBsetting, i);
   fprintf(log, "%s", textbuffer);
@@ -72,37 +72,48 @@ void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigne
   return;
 }
 
-void BloodBonus(FILE *rom, int header, unsigned char *growthbuffer, char BBsetting, int i)
+void BloodBonus(FILE *rom, int header, unsigned char *growthbuffer, int BBsetting, int i)
 {
-  int rn1, rn2, k;
+  int rn1,  k;
     
   /* Clear */
   memset(growthbuffer, 0x00, 8);
-  growthbuffer[0] = 20;
   
   switch(BBsetting)
   {
-    case '1': /* 20 to one, 10 to another */
-      rn1 = (rand()%7)+1;
-      do
-      {
-        rn2 = (rand()%7)+1;
-      }
-      while(rn1 == rn2);
-      growthbuffer[rn1] = 20;
-      growthbuffer[rn2] = 10;
-      break;
-    case '2': /* rounds of 10 */
+    case 1: /* 20 HP, 30 spread */
+      growthbuffer[0] = 20;
       for(k = 0; k < 3; k++)
       {
         rn1 = (rand()%7)+1;
         growthbuffer[rn1] += 10;
       }
       break;
-    case '3': /* 30 to one */
-      rn1 = (rand()%7)+1;
-      growthbuffer[rn1] = 30;
+    case 2: /* 20, 20 */
+      growthbuffer[0] = 20;
+      for(k = 0; k < 2; k++)
+      {
+        rn1 = (rand()%7)+1;
+        growthbuffer[rn1] += 10;
+      }
       break;
+    case 3: /* 10, 20 */
+      growthbuffer[0] = 10;
+      for(k = 0; k < 2; k++)
+      {
+        rn1 = (rand()%7)+1;
+        growthbuffer[rn1] += 10;
+      }
+      break;
+    case 4: /* 10, 10 */
+      growthbuffer[0] = 10;
+      for(k = 0; k < 1; k++)
+      {
+        rn1 = (rand()%7)+1;
+        growthbuffer[rn1] += 10;
+      }
+      break;
+    default:;
   }
   
   if(i == 12) /* Loptyr bonus */

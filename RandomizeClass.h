@@ -1,7 +1,7 @@
 
 /* Function for randomizing a unit's class, keeping promoted and unpromoted classes as such */
 /* Returns 0 for unpromoted units, 1 for promoted */
-void RandomizeClass(unsigned char *class, FILE *log)
+void RandomizeClass(unsigned char *class, unsigned char gender, FILE *log)
 {
   /* Don't randomize Dancers. NOTE: should i change that? */
   if(*class == 0x32)
@@ -16,11 +16,17 @@ void RandomizeClass(unsigned char *class, FILE *log)
   /* If promoted */
   if(CharInArray(*class, promoted))    
   {
-    *class = promoted[rand() % PROMOTEDCLASSCOUNT]; /* NOTE: Ask lektor: should i EVER worry about sizeof failing? */
+    do{
+      *class = promoted[rand() % PROMOTEDCLASSCOUNT]; /* NOTE: Ask lektor: should i EVER worry about sizeof failing? */
+    }/* Reroll the class until one that works with the units gender */
+    while(GenderMatch(gender, *class));
   }  
   else /* if unpromoted */
   {
-    *class = unpromoted[rand() % UNPROMOTEDCLASSCOUNT];
+    do{
+      *class = unpromoted[rand() % UNPROMOTEDCLASSCOUNT];
+    }/* Reroll the class until one that works with the units gender */
+    while(GenderMatch(gender, *class));
   }
   
   fprintf(log, "Class: ");

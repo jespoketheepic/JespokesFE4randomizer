@@ -9,17 +9,17 @@ void RandomizeBases(unsigned char *entrybuffer, int diffsetting)
   basetotal += entrybuffer[0]/2;
   /* Take out makeshift base HP of 16 */
   basetotal -= 8;
-  entrybuffer[0] = rand() % 1000;
+  entrybuffer[0] = rand() % 200;
   rntotal += entrybuffer[0];
   
   for(i = 1; i < 8; i++)
   {
     basetotal += entrybuffer[i];
-    entrybuffer[i] = rand() % 1000;
+    entrybuffer[i] = rand() % 200;
     rntotal += entrybuffer[i];
   }
   
-  /* Take off points for difficulty. -0x30 makes an ASCII number into its int value.*/
+  /* Take off points for difficulty. */
   basetotal -= diffsetting;
   if(basetotal < 0)
   {

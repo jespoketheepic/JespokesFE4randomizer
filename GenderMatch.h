@@ -1,26 +1,29 @@
 
-/* Function for matching units' genders to their class if it is gender-locked */
-/* Returns 0 if the classes are compatible, 1 if they are incompatible */
-int GenderMatch(unsigned char *gender, unsigned char class, unsigned char promoclass)
+/* Function for determining if a given class is compatible with a characters gender */
+/* Returns 0 if the class is compatible with the gender, 1 if they are incompatible */
+int GenderMatch(unsigned char gender, unsigned char class)
 {
-  int errorcode = 0;
   /* NOTE: REMEMBER TO MAKE SURE THE PROMO OPTIONS ADHERE TO THIS! 
      They can both be on the list, just not separate sides. */
   
   switch(class)
   {
-    case 0x04:
+    /*case 0x04:*/  /* Im accepting Free- and Forest Knight in the pool, because i want them there. It is only invisible weapons anyway */
     case 0x06:
     case 0x09:
-    case 0x0C:
-    case 0x25:
+    /*case 0x0C:*/
+    case 0x25:  
     case 0x2C:
     case 0x2E:
     case 0x27:
     case 0x29:
     case 0x2D:
-      *gender = 0x00; /* Male */
-      errorcode += 3;
+      if (gender == 0x00){  /* Male only */
+        return 0; /* For male this is fine */
+      }
+      else{
+        return 1; /* For female this is not fine */
+      }
       break;
     case 0x05:
     case 0x0A:
@@ -30,42 +33,17 @@ int GenderMatch(unsigned char *gender, unsigned char class, unsigned char promoc
     case 0x2F:
     case 0x30:
     case 0x3C:
-      *gender = 0x01; /* Female */
-      errorcode += 4;
+      if (gender == 0x01){  /* Female only */
+        return 0; /* For female this is fine */
+      }
+      else{
+        return 1; /* For male this is not fine */
+      }
       break;
-    default:;         /* Keep intact */
+    default:;         /* Works either way */
   }
-  switch(promoclass)
-  {
-    case 0x04:
-    case 0x06:
-    case 0x09:
-    case 0x0C:
-    case 0x25:
-    case 0x2C:
-    case 0x2E:
-    case 0x27:
-    case 0x29:
-    case 0x2D:
-      *gender = 0x00; /* Male */
-      errorcode += 3;
-      break;
-    case 0x05:
-    case 0x0A:
-    case 0x10:
-    case 0x11:
-    case 0x32:
-    case 0x2F:
-    case 0x30:
-    case 0x3C:
-      *gender = 0x01; /* Female */
-      errorcode += 4;
-      break;
-    default:;         /* Keep intact */
-  }
-    
-  /* Out of 0, 3 and 4, only the illegal combination of 3 and 4 can produce 7 */
-  return (errorcode == 7) ? 1 : 0;
+
+  return 0;
 }
 
 /* Classes confirmed to be unisex: 
@@ -86,7 +64,7 @@ int GenderMatch(unsigned char *gender, unsigned char class, unsigned char promoc
 0x17, Swordmaster*
 0x18, Sniper*
 0x19, Hero, unique sprites. ah, Creidne/Radney.
-0x1A, General, holy crap Sigurds palete is hideous on a General
+0x1A, General, holy crap Sigurds palete is hideous on a General though
 0x33, Priest*
 0x34, Plain Mage*
 0x35, Fire Mage
@@ -103,6 +81,7 @@ int GenderMatch(unsigned char *gender, unsigned char class, unsigned char promoc
 /* Classes that "work" unisex: 
 0x04, Free Knight, Weapon is invisible
 0x0C, Forest Knight, Invisible Weapon
+
 0x25, Sword Armor, Invisible Weapon
 0x2C, Junior Lord, Surprisingly only invisible weapon, considering how badly its promotion broke
 0x2E, Prince, Invisible Weapon

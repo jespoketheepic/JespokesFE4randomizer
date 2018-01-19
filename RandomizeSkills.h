@@ -2,7 +2,7 @@
 /* Prototype */
 int SkillAlloc(unsigned char *skillslot, int skillID, int *skillcount);
 
-void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, unsigned char pursuitsetting, FILE *log)
+void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, int pursuitsetting, FILE *log)
 {
   int skillcount = (skillsetting - 0x30);
   /* There are 14 skills aside from Pursuit, and the number in pursuitsetting corresponds to how many instances of Pursuit to add to the raffle */

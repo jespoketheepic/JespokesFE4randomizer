@@ -3,7 +3,7 @@ void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weapo
 {
   unsigned char weaponbuffer;
   int weaponrankbuffer[9], classrank, weaponrank, i, selectionbuffer[9], count;
-  /* Gen 1 has a Slim Sword, and a Slim Lance to give out */
+  /* Gen 1 has 2 Slim Swords, and a Slim Lance to give out */
   /* Gen 2 has a Slim Sword, and 2 Slim Lances to give out */
   
   classrank = ClassWeaponRanks(weaponrankbuffer, class);
@@ -11,10 +11,14 @@ void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weapo
   fseek(rom, WEAPONENTRY + header + weaponID, SEEK_SET);
   weaponbuffer = fgetc(rom);
   
-  /* Determine what rank the given weapon has (Blades are downgraded) */
+  /* Determine what rank the given weapon has (Bad blades are downgraded) */
   switch(weaponbuffer)
   {
+    case 0xFF:  /* No weapon */
+      return;
+    
     case 0x00: /* C rank cases */
+    /*case 0x03:*/
     case 0x1C:
     case 0x28:
     case 0x31:
@@ -22,10 +26,11 @@ void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weapo
     case 0x43:
     case 0x48:
     case 0x58:
-    case 0x03:
+
       weaponrank = 1;
       break;
     case 0x02:  /* A rank cases */
+    case 0x05:
     case 0x1E:
     case 0x2A:
     case 0x33:
@@ -33,7 +38,7 @@ void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weapo
     case 0x45:
     case 0x4A:
     case 0x5A:
-    case 0x05:
+
       weaponrank = 3;
       break;
     default : /* Any B rank weapon, slim weapon, and unaccounted for weapon gets a B */
@@ -92,12 +97,14 @@ void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weapo
   }
   
   /* Reimbursement box */
-  if(spareweapons[0] && (weaponbuffer == 0x00 || weaponbuffer == 0x01)) /* Slim Sword */
+  /* Slim Sword. There is almost inevitably someone who gets an Iron Sword, so no need to delete steel swords for this */
+  /* Sylvia takes one if nobody else wants it */
+  if(spareweapons[0] && (weaponbuffer == 0x00)) 
   {
     weaponbuffer = 0x0D;
     spareweapons[0]--;
   } 
-  if(spareweapons[1] && (weaponbuffer == 0x1C || weaponbuffer == 0x1D)) /* Slim Lance */
+  if(spareweapons[1] && (weaponbuffer == 0x1C || weaponbuffer == 0x1D)) /* Slim Lance, lances are less certain. And Slim Lance > Steel Lance is much more clear than with swords */
   {
     weaponbuffer = 0x22;
     spareweapons[1]--;

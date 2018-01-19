@@ -1,11 +1,11 @@
 
 /* Function that goes through each character entry and randomizes them based on the settings */
-void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log)
+void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log, FILE *superlog)
 {
   /* Plain char for text */
   char textbuffer[TEXTBUFFERSIZE];
-  unsigned char seliphbuffer, promo;
-  unsigned char spareweapons[] = {1,1};
+  unsigned char seliphblood[2];
+  unsigned char spareweapons[] = {2,1};
   int i;
   
   rewind(names); /* This is here in case of a rerun */
@@ -20,25 +20,31 @@ void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybu
     
     if(settings->class > '0')
     {
-      RandomizeClass(&entrybuffer[CLASS], log);
+      RandomizeClass(&entrybuffer[CLASS], entrybuffer[GENDER], log);
       MatchWeapon(rom, header, entrybuffer[CLASS], entrybuffer[WEAPON1], spareweapons);
     }
     /* Go to the randomize promotion function if we want to do that, OR if classes were changed and the promotions need to match! */
     if(settings->promotion > '0' || settings->class > '0')
     {
       /* Remember this has nothing to do with the entrybuffer */
-      promo = RandomizePromotion(rom, header, settings->promotion, log, entrybuffer[CLASS], i);
-      /* Only neccessary with random class, but it is important that it happens AFTER the promotion is changed. */
-      GenderMatch(&entrybuffer[GENDER], entrybuffer[CLASS], promo);
+      RandomizePromotion(rom, header, settings->promotion, log, entrybuffer[CLASS], entrybuffer[GENDER], i);
     }
     if(settings->bases > '0')
     {
       /* The bases are the very first thing in the buffer, so entrybuffer[BASES] is entrybuffer[0] */
-      RandomizeBases(entrybuffer, settings->difficulty);
+      RandomizeBases(&entrybuffer[0], settings->difficulty);
+    }
+    else if(settings->difficulty > 0) /* Apply difficulty even when not random */
+    {
+      ApplyDifficulty(&entrybuffer[0], settings->difficulty, 1);
     }
     if(settings->growths > '0')
     {
       RandomizeGrowths(&entrybuffer[GROWTH], settings->difficulty);
+    }
+    else if(settings->difficulty > 0) /* Apply difficulty even when not random */
+    {
+      ApplyDifficulty(&entrybuffer[GROWTH], settings->difficulty, 10);
     }
     if(settings->skills > '0')
     {
@@ -47,28 +53,10 @@ void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybu
     if(settings->bloodalloc > '0')
     {
       RandomizeCharacterHolyBlood(&entrybuffer[BLOOD], settings->bloodalloc, log);
-    }
-    /* Handle Seliph's holy blood while working on his parents */
-    if(i == 0 && settings->bloodalloc > '0')
-    { /* Father */
-      fseek(rom, SELIPHBLOOD + header, SEEK_SET);
-      fputc(entrybuffer[BLOOD], rom);
-      fputc(entrybuffer[BLOOD+1], rom);
-    }
-    if(i == 15 && settings->bloodalloc > '0')
-    { /* Mother */
-      fseek(rom, SELIPHBLOOD + header, SEEK_SET);
-      seliphbuffer = fgetc(rom);
-      /* Long story short, this masks all her holy blood to minors, and & operates them into what was already there. */
-      seliphbuffer &= (((entrybuffer[BLOOD] & 170 /*1010 1010*/)/2) & 85 /*0101 0101*/);
-      fseek(rom, SELIPHBLOOD + header, SEEK_SET);
-      fputc(seliphbuffer, rom);
-      
-      fseek(rom, SELIPHBLOOD + 1 + header, SEEK_SET);
-      seliphbuffer = fgetc(rom);
-      /* Long story short, this masks all her holy blood to minors, and & operates them into what was already there. */
-      seliphbuffer &= (((entrybuffer[BLOOD+1] & 170 /*1010 1010*/)/2) & 85 /*0101 0101*/);
-      fseek(rom, SELIPHBLOOD + 1 + header, SEEK_SET);
+      if(i == 0 || i == 15)
+      {
+        SeliphBlood(rom, header, &entrybuffer[BLOOD], seliphblood, i, superlog);
+      }
     }
     /* If either of these is active, we need to print stats to the log */
     if(settings->bases > '0' || settings->growths > '0')

@@ -10,22 +10,18 @@ void SetSettings(Settings *settings)
   {
     do  /* Prompt difficulty */
     {
-      printf("\nThis randomizer has a tendency to make the game easier, especially when using the interesting options like many skills and holy bloods.\n"
+      printf("\nRandomizing the game has various factors that can make the game harder or easier.\n"
       "So here is a chance to up the difficulty by nerfing your units. You will get a chance to change your choice at the end.\n"
-      "Enter a number for how many times you want to take 10%% growth and 1 base stat point off your units.\n"
-      "0 for   -0  growthtotal               \"The bad spreads are compensation enough. Im not taking the crazy options anyway.\"\n"
-      "2 for  -20  growthtotal and  -2 base  \"A little hit is enough.\"\n"
-      "4 for  -40  growthtotal and  -4 base  \"The middle option.\"\n"
-      "6 for  -60  growthtotal and  -6 base  \"This brings characters with no holy blood that gained Major about back on par, before the randomizer makes them worse.\"\n"
-      "8 for  -80  growthtotal and  -8 base  \"Now we are taking off some serious stuff.\"\n"
-      "10 for -100 growthtotal and -10 base  \"... Proceed with caution.\n"
-      "Or anything inbetween, or all the way up to 20!!!\n"
-      "*These are only applied if you randomize growths and bases respecively\n"
-      "*(Don't actually go up to 20, your units will have almost 0%% growth and class base bases)");
+      "Enter a number for how many times you want to take 20%% growth and 1 base stat point off your units. (Capped at 5)\n"
+      "For example:\n"
+      "0 for no changes                      \"The bad spreads are compensation enough. Im not taking the crazy options anyway.\"\n"
+      "1 for  -20  growthtotal and  -1 base  \"A little hit is enough.\"\n"
+      "3 for  -60  growthtotal and  -3 base  \"This brings characters with no holy blood that gained Major back about where they started, even before other options set in.\"\n"
+      "5 for  -100  growthtotal and  -5 base  \"... Proceed with caution.\n");
       fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(intbuffer < 0 || intbuffer > 20);
+    while(intbuffer < 0 || intbuffer > 5);
 
     settings->difficulty = intbuffer;
     
@@ -37,6 +33,8 @@ void SetSettings(Settings *settings)
       "2 to randomize, without showing the kids' weapons\n"
       "*This will also edit several weapons, and slightly alter shop inventory.\n"
       "*Does not affect or produce Dancers.\n"
+      "*Characters can become any class that won't break the game due to gender incompatibility.\n"
+      "*Class/gender combinations that cause minor visual glitches are still included.\n"
       "*Replacement kids get the weapons of the kid they are replacing, which they probably can't use after being randomized.\n");
       charbuffer = getchar();
       Flushline(stdin);
@@ -54,11 +52,9 @@ void SetSettings(Settings *settings)
       "*If you didn't randomize classes, 0 won't change anything either.\n"
       "*Classes with multiple \"standard\" promotions (Mages, Myrmidons) have an even chance for each, even on option 0\n"
       "**For option 1:\n"
-      "*Be prepared to get a LOT of Paladins\n"
-      "*Classes that can become either male or female Paladin still only have one lot for \"Paladin\" in their randomization.\n"
       "*Lord Knight is excluded from classes other than Junior Lord because it sucks.\n"
       "*Units won't gain or lose armored status.\n"
-      "*Shamans without Naga blood lose light magic rank on promotion because there is no promoted class with A-rank light.\n"
+      "*Priestess' without Naga blood lose light magic rank on promotion because there is no promoted class with A-rank light.\n"
       "*Master Knight is not included in the regular pool, except for Prince and Princess (Who can still become many other things!), but every character has a 5%% chance of becoming a Master Knight.\n");
       charbuffer = getchar();
       Flushline(stdin);
@@ -83,7 +79,9 @@ void SetSettings(Settings *settings)
     {
       printf("\nDo you want randomized growths? Enter:\n"
       "0 for no changes\n"
-      "1 for randomly distributed growths\n");
+      "1 for randomly distributed growths\n"
+      "*!Beware, this is a bigger difficulty increase than in other games in the series!\n"
+      "*A lot of growths will end up in undesirable stats, because so many of the stats are undesirable in this game.\n");
       charbuffer = getchar();
       Flushline(stdin);
     }
@@ -129,14 +127,15 @@ void SetSettings(Settings *settings)
         printf("\nHow much Pursuit do you want? Enter:\n"
         "0 everyone gets Pursuit\n"
         "1 for 1x as often as others\n"
-        "2 for 2x, etc up to 9\n");
-        charbuffer = getchar();
+        "2 for 2x, etc up to 20\n"
+        "*There are 14 other skills than Pursuit, so 14 makes it a 50/50 on each skill roll.\n");
+        fscanf(stdin, "%d", &intbuffer);
         Flushline(stdin);
       }
-      while(charbuffer != '0' && charbuffer != '1' && charbuffer != '2' && charbuffer != '3' && charbuffer != '4' && charbuffer != '5' && charbuffer != '6' && charbuffer != '7' && charbuffer != '8' && charbuffer != '9');
+      while(intbuffer < 0 || intbuffer > 20);
     }
     
-    settings->pursuit = charbuffer;
+    settings->pursuit = intbuffer;
     
     do  /* Prompt holyblood allocation */
     {
@@ -156,25 +155,27 @@ void SetSettings(Settings *settings)
     {
       printf("\nDo you want randomized holy blood growth bonuses? Enter:\n"
       "0 for no changes\n"
-      "1 for 20%% to one stat 10%% to another\n"
-      "2 for 30%% spread in chunks of 10%%\n"
-      "3 for 30%% in one stat\n"
-      "*All holy bloods also give 20%% HP\n"
+      "1 for 20%% HP and 30%% spread among the rest\n"
+      "2 for 20%% HP and 20%% spread among the rest\n"
+      "3 for 10%% HP and 20%% spread among the rest\n"
+      "4 for 10%% HP and 10%% on another stat\n"
+      "5 for no bonus\n"
+      "*It is highly advised you pick a small holy blood bonus when playning with many skills and holy bloods, if you wish for any challenge out of the second half of the game."
       "*Loptyr gets 10%% extra because it sucks for the coolest one to also be the worst one.\n");
-      charbuffer = getchar();
+      fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(charbuffer != '0' && charbuffer != '1' && charbuffer != '2' && charbuffer != '3');
+    while(intbuffer < 0 || intbuffer > 4);
 
-    settings->bloodbonus = charbuffer;
+    settings->bloodbonus = intbuffer;
     
     do  /* Prompt holy weapon bonuses */
     {
       printf("\nDo you want randomized holy weapon bonuses? Enter:\n"
       "0 for no changes\n"
-      "1 for 20 to one stat 10 to another\n"
-      "2 for 30 randomly spread in chunks of 10\n"
-      "*Like in vanilla, Tyrfing gets +10 and Naga gets +50.\n");
+      "1 for 30 randomly spread in chunks of 10\n"
+      "2 for 20 to one stat 10 to another\n"
+      "*Like in vanilla, Naga gets +50.\n");
       charbuffer = getchar();
       Flushline(stdin);
     }
@@ -204,13 +205,11 @@ void SetSettings(Settings *settings)
     {
       printf("\nDo you want rebalanced melee weapons? Enter:\n"
       "0 for no\n"
-      "1 for giving Swords -2 might and Axes +2 might\n"
-      "2 for giving Swords +3 weight and Axes -3 weight\n"
-      "3 for doing both of 1 and 2\n");
+      "1 for giving Swords +3 weight and Axes -2 weight +2 might\n");
       fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(intbuffer < 0 || intbuffer > 3);
+    while(intbuffer < 0 || intbuffer > 1);
 
     settings->weapons->balancemelee = intbuffer;
     
@@ -218,7 +217,7 @@ void SetSettings(Settings *settings)
     {
       printf("\nDo you want rebalanced magic weapons? Enter:\n"
       "0 for no\n"
-      "1 for giving Wind -3 might and Fire +3 might\n"
+      "1 for giving Wind -2 might and Fire +2 might\n"
       "2 for giving Wind +2 weight and Fire -2 weight\n"
       "3 for doing both of 1 and 2\n"
       "*Long range magic is excluded, as is Valflame.\n");
@@ -276,20 +275,20 @@ void SetSettings(Settings *settings)
     
     do  /* Prompt difficulty */
     {
-      printf("\nIf your decisions made you change your mind about your chosen difficulty, you can change it now:\n"
-      "Enter:\n"
-      "0 for 0%%, \"the bad spreads are compensation enough. Im not taking the crazy options anyway.\"\n"
-      "1 for 40%% and 1 base, \"A minor holy blood's worth is enough\"\n"
-      "2 for 80%% and 2 base, \"This brings characters with no holy blood that gained Major back on par, before randomizer badness and skills.\"\n"
-      "3 for 120%% and 3 base, \"Now we are taking off some serious stuff.\"\n"
-      "4 for 160%% and 4 base, \"Relying a lot on bases and skills at this point!\"\n"
-      "5 for 200%% and 5 base, \"I don't know where to stop, this is pretty intense... Proceed with caution.\n");
-      charbuffer = getchar();
+      printf("\nRandomizing the game has various factors that can make the game harder or easier.\n"
+      "So here is a chance to up the difficulty by nerfing your units. You will get a chance to change your choice at the end.\n"
+      "Enter a number for how many times you want to take 20%% growth and 1 base stat point off your units. (Capped at 5)\n"
+      "For example:\n"
+      "0 for no changes                      \"The bad spreads are compensation enough. Im not taking the crazy options anyway.\"\n"
+      "1 for  -20  growthtotal and  -1 base  \"A little hit is enough.\"\n"
+      "3 for  -60  growthtotal and  -3 base  \"This brings characters with no holy blood that gained Major back about where they started, even before other options set in.\"\n"
+      "5 for  -100  growthtotal and  -5 base  \"... Proceed with caution.\n");
+      fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(charbuffer != '0' && charbuffer != '1' && charbuffer != '2' && charbuffer != '3' && charbuffer != '4' && charbuffer != '5');
+    while(intbuffer < 0 || intbuffer > 5);
 
-    settings->difficulty = charbuffer;
+    settings->difficulty = intbuffer;
     
     do
     {

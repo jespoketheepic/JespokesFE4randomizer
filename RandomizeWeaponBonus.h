@@ -78,7 +78,7 @@ void WeaponBonus(FILE *rom, int header, unsigned char *statbuffer, char WBsettin
   
   switch(WBsetting)
   {
-    case '1': /* 20 to one, 10 to another */
+    case '2': /* 20 to one, 10 to another */
       rn1 = (rand()%6);
       do
       {
@@ -88,24 +88,24 @@ void WeaponBonus(FILE *rom, int header, unsigned char *statbuffer, char WBsettin
       statbuffer[rn1] = 20;
       statbuffer[rn2] = 10;
       break;
-    case '2': /* rounds of 10 */
+    case '1': /* rounds of 10 */
       for(k = 0; k < 3; k++)
       {
         rn1 = (rand()%6);
         statbuffer[rn1] += 10;
       }
       break;
-    case '3': /* 30 to one */
+/*    case '3':  30 to one 
       rn1 = (rand()%6);
       statbuffer[rn1] = 30;
-      break;
+      break;*/
   }
   
-  if(i == 0) /* Tyrfing bonus */
+  /*if(i == 0) Tyrfing bonus 
   {
     rn1 = (rand()%6);
     statbuffer[rn1] += 10;
-  }
+  }*/
   if(i == 1) /* Naga bonus */
   {
     for(k = 0; k < 5; k++)

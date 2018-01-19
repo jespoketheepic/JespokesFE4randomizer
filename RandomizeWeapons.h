@@ -13,24 +13,15 @@ void RandomizeWeapons(FILE *rom, int header, Weapons *weapons)
     if(weapons->balancemelee){
       /* If sword */
       if(i < 0x18){
-        /* If might */
-        if(weapons->balancemelee == 1 || weapons->balancemelee == 3){
-          weaponentrybuffer[0] -= 2;
-        }
-        /* If weight */
-        if(weapons->balancemelee == 2 || weapons->balancemelee == 3){
-          weaponentrybuffer[2] += 3;
+        if(weapons->balancemelee == 1){
+          weaponentrybuffer[2] -= 3;
         }
       }
       /* If axe */
       if(i > 0x27 && i < 0x2E){
-      /* If might */
-        if(weapons->balancemelee == 1 || weapons->balancemelee == 3){
+        if(weapons->balancemelee == 1){
           weaponentrybuffer[0] += 2;
-        }
-        /* If weight */
-        if(weapons->balancemelee == 2 || weapons->balancemelee == 3){
-          weaponentrybuffer[2] -= 3;
+          weaponentrybuffer[2] -= 2;
         }
       }
     }
@@ -42,7 +33,7 @@ void RandomizeWeapons(FILE *rom, int header, Weapons *weapons)
       if(i > 0x3D && i < 0x41){
         /* If might */
         if(weapons->balancemagic == 1 || weapons->balancemagic == 3){
-          weaponentrybuffer[0] += 3;
+          weaponentrybuffer[0] += 2;
         }
         /* If weight */
         if(weapons->balancemagic == 2 || weapons->balancemagic == 3){
@@ -53,7 +44,7 @@ void RandomizeWeapons(FILE *rom, int header, Weapons *weapons)
       if(i > 0x47 && i < 0x4C){
       /* If might */
         if(weapons->balancemelee == 1 || weapons->balancemelee == 3){
-          weaponentrybuffer[0] -= 3;
+          weaponentrybuffer[0] -= 2;
         }
         /* If weight */
         if(weapons->balancemelee == 2 || weapons->balancemelee == 3){

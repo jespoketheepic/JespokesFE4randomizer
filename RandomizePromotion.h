@@ -5,13 +5,13 @@ void PromotionFinder(unsigned char *promo, unsigned char class, int mode);
 /* Function that randomizes promotions */
 /* OBS: characternr here is their nr within their generation */ 
 /* Offset for gen 1 is their number, gen 2 is FIRSTGEN + their nr + the offset for skipping kids, and gen 3(kids) it is FIRSTGEN + a number that has to be found manually */
-/* Returns the class they promote to for use in the gender swapping function */
-unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, int offset)    
+/* Returns the chosen promotion, a value whose utility has been phased out */
+unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, unsigned char gender, int offset)    
 {
   /* Beware of this function, the character order is freaky */
   
   const unsigned char promoted[] = {0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x11, 0x14, 0x17, 0x18, 0x19, 0x1A, 0x29, 0x30, 0x38, 0x3A, 0x40, 0xFF};
-  unsigned char promotionbuffer, genderdecoy = 0x00;
+  unsigned char promotionbuffer;
   
   /* If not promoted, do stuff */
   if(!CharInArray(class, promoted))
@@ -22,16 +22,22 @@ unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetti
       do
       {
         promotionbuffer = promoted[rand() % PROMOTEDCLASSCOUNT];
-      } /* GenderMatch returns 1 if they are incompatible, causing a reroll. Genderdecoy is just there to catch and discard its output so the compiler doesn't complain */
-      while(GenderMatch(&genderdecoy, class, promotionbuffer));
+      } /* GenderMatch returns 1 if the chosen class is incompatible with the characters gender, causing a reroll. */
+      while(GenderMatch(gender, promotionbuffer));
     }
     else if(promosetting == '0')   /* else if simple, find the right promotion by calling PromotionFinder in fixed mode */
     {
-      PromotionFinder(&promotionbuffer, class, 0);
+      do{
+        PromotionFinder(&promotionbuffer, class, 0);
+      } /* Necessary since there are promotion options from unisex that are gender locked */
+      while(GenderMatch(gender, promotionbuffer));
     }
     else      /* else we are looking for a random out of a selection, by calling PromotionFinder in random mode */
     {
-      PromotionFinder(&promotionbuffer, class, 1);
+      do{
+        PromotionFinder(&promotionbuffer, class, 1);
+      } /* Necessary since there are promotion options from unisex that are gender locked */
+      while(GenderMatch(gender, promotionbuffer));
     }
     
     /* Write to file */
@@ -106,7 +112,9 @@ void PromotionFinder(unsigned char *promo, unsigned char class, int mode)
         i++;
         if(mode)
         {
-          choicebuffer[i] = 0x09;  /* Paladin (M) */  /* Paladin (F) removed for gender conflict */
+          choicebuffer[i] = 0x09;  /* Paladin (M) */ 
+          i++;
+          choicebuffer[i] = 0x09;  /* Paladin (F) */  /* Paladin (F) can be removed if female Free Knight causes problems */
           i++;
           choicebuffer[i] = 0x0D;  /* Mage Knight */
           i++;
@@ -290,7 +298,9 @@ void PromotionFinder(unsigned char *promo, unsigned char class, int mode)
         i++;
         if(mode)
         {
-          choicebuffer[i] = (rand() % 2) ? 0x09 : 0x0A;  /* Paladin (M/F) */
+          choicebuffer[i] = 0x09;  /* Paladin (M) */
+          i++;
+          choicebuffer[i] = 0x0A;  /* Paladin (F) */
           i++;
           choicebuffer[i] = 0x0C;  /* Forest Knight */
           i++;
