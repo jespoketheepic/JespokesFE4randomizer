@@ -74,7 +74,7 @@ void DoHolyBloodGrowth(FILE *rom, int header, FILE *log, FILE *superlog, unsigne
 
 void BloodBonus(FILE *rom, int header, unsigned char *growthbuffer, int BBsetting, int i)
 {
-  int rn1,  k;
+  int rn1, k;
     
   /* Clear */
   memset(growthbuffer, 0x00, 8);

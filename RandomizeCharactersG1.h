@@ -44,7 +44,7 @@ void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybu
     }
     else if(settings->difficulty > 0) /* Apply difficulty even when not random */
     {
-      ApplyDifficulty(&entrybuffer[GROWTH], settings->difficulty, 10);
+      ApplyDifficulty(&entrybuffer[GROWTH], settings->difficulty, 20);
     }
     if(settings->skills > '0')
     {

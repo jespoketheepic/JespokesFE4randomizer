@@ -1,6 +1,6 @@
 
 /* Save the unique stuff in character's 1. inventory slot from being randomized away, by swapping them with junk from the shop. */
-void ItemShuffle(FILE *rom, unsigned char header)
+void ItemShuffle(FILE *rom, int header)
 {
   /* Locations of first weapon of each character with a non-generic one */ 
   const int JamkeW1 = 0x3B406;
@@ -58,7 +58,7 @@ void ItemShuffle(FILE *rom, unsigned char header)
   ByteSwap(rom, CedW1 + header, CedW1 + 1 + header);
   fseek(rom, HawkW1 + 1 + header, SEEK_SET);
   fputc(0x8D, rom);
-  ByteSwap(rom, HawkW1 + header, HawkW1 + 1 + header);
+  ByteSwap(rom, HawkW1 + header, HawkW1 + 1 + header);  
   
   /* The empty weapon slot 8F is filled out with a Steel Sword that is given to Patty and Daisy, and moved to his 1st slot */
   fseek(rom, EmptyWeapon + 1 + header, SEEK_SET);

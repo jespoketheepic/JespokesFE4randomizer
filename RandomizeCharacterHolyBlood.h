@@ -3,25 +3,66 @@
 void RandomHolyBlood(unsigned char *entrybufferblood, int mode, FILE *log);
 
 
-void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, char bloodsetting, FILE *log)
+void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, int bloodsetting, FILE *log)
 {
-  int i;
+  int i, random; 
   
   /* Wipe blood */
   for(i = 0; i < 4; i++)
   {
     entrybufferblood[i] = 0;
   }
-  fprintf(log, "Holy Blood: Major ");
-  /* Get a Major blood */
-  RandomHolyBlood(entrybufferblood, 1, log);
   
-  /* If in a high mode, add some minor blood*/
-  if(bloodsetting > '1')
+  if(bloodsetting == 1)
   {
+    fprintf(log, "Holy Blood: Major ");
+    /* Get a Major blood */
+    RandomHolyBlood(entrybufferblood, 1, log);
+  }
+  
+  /* Major and Minor blood */
+  if(bloodsetting == 2)
+  {
+    fprintf(log, "Holy Blood: Major ");
+    /* Get a Major blood */
+    RandomHolyBlood(entrybufferblood, 1, log);
     fprintf(log, ", Minor ");
     RandomHolyBlood(entrybufferblood, 2, log);
   }
+  
+  /* 2/3 minor, 1/3 major */
+  if(bloodsetting == 3)
+  {
+    random = rand() % 3;
+    fprintf(log, "Holy Blood: ");
+    if(random == 2)
+    {
+      fprintf(log, "Major ");
+      /* Get a Major blood */
+      RandomHolyBlood(entrybufferblood, 1, log);
+    }
+    else
+    {
+      fprintf(log, "Minor ");
+      /* Get a Minor blood */
+      RandomHolyBlood(entrybufferblood, 2, log);
+    }
+  }
+  
+  /* 3 Minors */
+  if(bloodsetting == 4)
+  {
+    fprintf(log, "Holy Blood: Minor ");
+    /* Get a Minor blood x3 */
+    RandomHolyBlood(entrybufferblood, 2, log);
+    fprintf(log, ", Minor ");
+    RandomHolyBlood(entrybufferblood, 2, log);
+    fprintf(log, ", Minor ");
+    RandomHolyBlood(entrybufferblood, 2, log);
+    fprintf(log, ", Minor ");
+    RandomHolyBlood(entrybufferblood, 2, log);
+  }
+  
   
   fputc('\n', log);
   

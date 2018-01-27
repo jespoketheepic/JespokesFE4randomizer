@@ -80,7 +80,7 @@ typedef struct Settings
                                 *Pursuit will appear more often than other skills
                                 *Sword skills are usable by all weapons and classes */
   int pursuit;               /* 0 for everyone gets Pursuit, 1 for 1x as often as others, etc up to 9 */
-  unsigned char bloodalloc;  /* 0 for no, 1 for everyone gets a Major, 2 for everyone gets a Major and a Minor */
+  int bloodalloc;  /* 0 for no, 1 for everyone gets a Major, 2 for everyone gets a Major and a Minor */
   int bloodbonus;            /* 0 for no, 1 20% to one stat 10% to another, 2 30% spread in chunks of 10%, 3 30% in one stat, 
                                 *all bloods also give 20% HP */
   unsigned char weaponbonus; /* 0 for keep, 1 for 20 to one stat 10 to another, 2 for 30 points spread in chunks of 10
@@ -93,7 +93,7 @@ typedef struct Settings
 
 /* Prototypes */
 void SetSettings(Settings *settings);
-void ItemShuffle(FILE *rom, unsigned char header);
+void ItemShuffle(FILE *rom, int header);
 void ByteSwap(FILE *file, int loc1, int loc2);
 void Flushline(FILE *file);
 void FixedStuff(FILE *rom, int header);
@@ -106,12 +106,12 @@ void RandomizeBases(unsigned char *entrybuffer, int diffsetting);
 void RandomizeGrowths(unsigned char *entrybuffer, int diffsetting);
 void PrintStats(FILE *log, unsigned char *entrybuffer, unsigned char basesetting, unsigned char growthsetting, FILE *rom, int header, unsigned char class, unsigned char *blood);
 void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting, int pursuitsetting, FILE *log);
-void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, char bloodsetting, FILE *log);
+void RandomizeCharacterHolyBlood(unsigned char *entrybufferblood, int bloodsetting, FILE *log);
 void RandomizeBloodBonus(FILE *rom, int header, int BBsetting, FILE *log, FILE *superlog);
 void RandomizeWeaponBonus(FILE *rom, int header, unsigned char WBsetting, FILE *log);
 void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entrybuffer, int header, FILE *names, FILE *log);
 int ClassWeaponRanks(int *weaponrankbuffer, unsigned char class);
-void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char promosetting, FILE *names, FILE *log, FILE *superlog);
+void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsigned char promosetting, FILE *names, FILE *log, FILE *superlog);
 void MatchWeapon(FILE *rom, int header, unsigned char class, unsigned char weaponID, unsigned char *spareweapons);
 int GenderMatch(unsigned char gender, unsigned char class);
 void RandomizeWeapons(FILE *rom, int header, Weapons *weapons);
@@ -173,10 +173,10 @@ int main()
   textbuffer[strcspn(textbuffer, "\n")] = '\0'; /* Remove the newline that fgets gives */
   if((rom = fopen(textbuffer, "r+b")) == NULL)
   {
-    printf("Error: Couldn't find ROM.\n"
+    printf("Error: Couldn't find ROM. (%s)\n"
     "Is it in the folder together with this program?\n"
     "Is its name 40 characters or less long?\n"
-    "Press Enter to exit.\n");
+    "Press Enter to exit.\n", textbuffer);
     Flushline(stdin);
     return EXIT_FAILURE;
   }
@@ -235,7 +235,7 @@ int main()
   "*The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warnings:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
-  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it.\n" 
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n"
   "Press Enter to continue.\n"); /* NOTE: Add stuff as it is added */
   Flushline(stdin);
@@ -258,7 +258,7 @@ int main()
   "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warnings:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
-  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it.\n"
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   fprintf(superlog, "Changes that are made regardless of settings:\n"
   "* All skills are usable and inheritable by all classes\n"
@@ -269,7 +269,7 @@ int main()
   "* The final boss' defenses are lowered, and he no longer has Wrath.\n\n"
   "Warning:\n"
   "*Inheriting multiple Holy Weapons on the same characer messes up your save file.\n"
-  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it."
+  "*Some sprites for reqruitable enemies load wrong. Reseting the game once they are reqruited fixes it.\n"
   "*Seizing the second to last castle in chapter 9 before defeating Travant will prevent Altenna from joining you.\n\n");
   
   /* Save the unique stuff in character's 1st inventory slot from being randomized away, by swapping them with junk from the shop. */
@@ -279,7 +279,8 @@ int main()
   }
   
   /* Randomize non-character stuff*/
-  if(settings->bloodbonus > '0')
+  printf("\nBonus:\n");
+  if(settings->bloodbonus > 0)
   {
     RandomizeBloodBonus(rom, header, settings->bloodbonus, log, superlog);
   }
@@ -293,11 +294,15 @@ int main()
   }*/
   
   /* Randomize the characters! */
+  printf("\nGen 1:\n");
   RandomizeCharactersG1(rom, settings, entrybuffer, header, names, log, superlog);
+  printf("\nGen 2:\n");
   RandomizeCharactersG2Fix(rom, settings, entrybuffer, header, names, log);
+  printf("\nKids:\n");
   RandomizeChildClassAndPromo(rom, header, settings->class, settings->promotion, names, log, superlog);
   
   /* Randomize Weapons */
+  printf("\nWeapons:\n");
   RandomizeWeapons(rom, header, settings->weapons);
   
   printf("\nThanks to the various Serenesforest users who found most of the obscure ROM adresses this program edits. Particular thanks to Lamia and the other posters in \"Lamia's FE4 stuff\"\n"

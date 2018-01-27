@@ -34,7 +34,7 @@ void SetSettings(Settings *settings)
       "*This will also edit several weapons, and slightly alter shop inventory.\n"
       "*Does not affect or produce Dancers.\n"
       "*Characters can become any class that won't break the game due to gender incompatibility.\n"
-      "*Class/gender combinations that cause minor visual glitches are still included.\n"
+      "*Class/gender combinations that cause minor visual glitches are still included. Female sword cavalry for example fights with invisible swords, but otherwise work fine.\n"
       "*Replacement kids get the weapons of the kid they are replacing, which they probably can't use after being randomized.\n");
       charbuffer = getchar();
       Flushline(stdin);
@@ -143,13 +143,17 @@ void SetSettings(Settings *settings)
       "0 for no changes\n"
       "1 everyone gets 1 Major blood\n"
       "2 everyone gets 1 Major and 1 Minor blood\n"
+      "3 everyone has 33%% chance of getting a Major blood, and 66%% chance of a Minor blood.\n"
+      "4 everyone gets 4 minor bloods.\n"
+      "*Option 4 means you can't use Holy Weapons in gen 1, but gives a lot of options when matching for children.\n"
+      "*Consider that most units will get holy blood that doesn't match their weapon.\n"
       "*Seliph is incapable of inheriting certain holy blood types.\n");
       charbuffer = getchar();
       Flushline(stdin);
     }
-    while(charbuffer != '0' && charbuffer != '1' && charbuffer != '2');
+    while(intbuffer < 0 || intbuffer > 4);
 
-    settings->bloodalloc = charbuffer;
+    settings->bloodalloc = intbuffer;
 
     do  /* Prompt holy blood bonuses */
     {
@@ -272,6 +276,12 @@ void SetSettings(Settings *settings)
 
       settings->weapons->hit = intbuffer;
     }
+    else
+    {
+      settings->weapons->might = 0;
+      settings->weapons->hit = 0;
+      settings->weapons->weight = 0;
+    }
     
     do  /* Prompt difficulty */
     {
@@ -301,5 +311,10 @@ void SetSettings(Settings *settings)
     while(confirm != '0' && confirm != '1');
   }
   while(confirm != '0');
+  
+  printf("If the program gets stuck beyond this point, get a fresh rom and consider sending a bug report.\n"
+  "Press Enter to continue:");
+  getchar();
+  
   return;
 }

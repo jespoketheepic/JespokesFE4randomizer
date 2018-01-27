@@ -8,7 +8,7 @@
 void PrintWeaponRanks(int *weaponrankbuffer, FILE *log);
 
 
-void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, char promosetting, FILE *names, FILE *log, FILE *superlog)
+void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsigned char promosetting, FILE *names, FILE *log, FILE *superlog)
 {
   unsigned char classbuffer, weaponID, gender;
   unsigned char spareweapons[] = {1,2};
