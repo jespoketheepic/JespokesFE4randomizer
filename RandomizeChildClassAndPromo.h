@@ -24,6 +24,7 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsig
   
   
   /* Seliph */
+  printf("Seliph");
   fgets(textbuffer, TEXTBUFFERSIZE, names);
   fprintf(log, "%s", textbuffer);
   if(classsetting == '1')
@@ -57,6 +58,7 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsig
   
   
   /* Leif */
+  printf("Leif");
   fgets(textbuffer, TEXTBUFFERSIZE, names);
   fprintf(log, "%s", textbuffer);
   if(classsetting == '1')
@@ -89,6 +91,7 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsig
   
   
   /* Altenna */
+  printf("Altenna");
   fgets(textbuffer, TEXTBUFFERSIZE, names);
   fprintf(log, "%s", textbuffer);
   if(classsetting == '1')
@@ -121,6 +124,7 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsig
   
   
   /* The rest */
+  printf("The rest\n");
   for(i = 0; i < VARIABLEKIDCOUNT; i++)
   {
     fgets(textbuffer, TEXTBUFFERSIZE, names);

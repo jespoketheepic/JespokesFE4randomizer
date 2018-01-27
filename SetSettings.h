@@ -80,8 +80,7 @@ void SetSettings(Settings *settings)
       printf("\nDo you want randomized growths? Enter:\n"
       "0 for no changes\n"
       "1 for randomly distributed growths\n"
-      "*!Beware, this is a bigger difficulty increase than in other games in the series!\n"
-      "*A lot of growths will end up in undesirable stats, because so many of the stats are undesirable in this game.\n");
+      "*Keep in mind that some of the growths will end up in undesirable stats.\n");
       charbuffer = getchar();
       Flushline(stdin);
     }
@@ -148,7 +147,7 @@ void SetSettings(Settings *settings)
       "*Option 4 means you can't use Holy Weapons in gen 1, but gives a lot of options when matching for children.\n"
       "*Consider that most units will get holy blood that doesn't match their weapon.\n"
       "*Seliph is incapable of inheriting certain holy blood types.\n");
-      charbuffer = getchar();
+      fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
     while(intbuffer < 0 || intbuffer > 4);
@@ -169,7 +168,7 @@ void SetSettings(Settings *settings)
       fscanf(stdin, "%d", &intbuffer);
       Flushline(stdin);
     }
-    while(intbuffer < 0 || intbuffer > 4);
+    while(intbuffer < 0 || intbuffer > 5);
 
     settings->bloodbonus = intbuffer;
     

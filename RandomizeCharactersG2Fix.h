@@ -53,6 +53,7 @@ void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entr
     
     if(settings->class > '0')
     {
+      printf("Class");
       RandomizeClass(&entrybuffer[CLASS], entrybuffer[GENDER], log);
       /* Remember to add the setting check for logging here for the kids, not the fixed. */
       /* Doing it for the subs is fine, they will be overwritten by the kids anyway. Might downgrade one here and there, but thats fine. */
@@ -61,40 +62,49 @@ void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entr
     /* Go to the randomize promotion function if we want to do that, OR if classes were changed and the promotions need to match! */
     if(settings->promotion > '0' || settings->class > '0')
     {
+      printf("Promotion");
       /* Remember this has nothing to do with the entrybuffer */
       RandomizePromotion(rom, header, settings->promotion, log, entrybuffer[CLASS], entrybuffer[GENDER], FIRSTGEN + i + offset/0x0C);
     }
     if(settings->bases > '0')
     {
+      printf("Bases");
       /* The bases are the very first thing in the buffer, so entrybuffer[BASES] is entrybuffer[0] */
       RandomizeBases(entrybuffer, settings->difficulty);
     }
     else if(settings->difficulty > 0) /* Apply difficulty even when not random */
     {
+      printf("Difficulty(Bases)");
       ApplyDifficulty(&entrybuffer[0], settings->difficulty, 1);
     }
     if(settings->growths > '0')
     {
+      printf("Growth");
       RandomizeGrowths(&entrybuffer[GROWTH], settings->difficulty);
     }
     else if(settings->difficulty > 0) /* Apply difficulty even when not random */
     {
+      printf("Difficulty(Growth)");
       ApplyDifficulty(&entrybuffer[GROWTH], settings->difficulty, 10);
     }
     if(settings->skills > '0')
     {
+      printf("Skills");
       RandomizeSkills(&entrybuffer[SKILL], settings->skills, settings->pursuit, log);
     }
-    if(settings->bloodalloc > '0')
+    if(settings->bloodalloc > 0)
     {
+      printf("BloodAlloc");
       RandomizeCharacterHolyBlood(&entrybuffer[BLOOD], settings->bloodalloc, log);
     }
     /* If either of these is active, we need to print stats to the log */
     if(settings->bases > '0' || settings->growths > '0')
     {
+      printf("PrintStats");
       PrintStats(log, entrybuffer, settings->bases, settings->growths, rom, header, entrybuffer[CLASS], &entrybuffer[BLOOD]);
     }
   
+    printf("Write\n");
     /* Write to file */
     fseek(rom, CHARACTER + header + offset + (CHARACTERSIZE * FIRSTGEN) + (CHARACTERSIZE * i), SEEK_SET);
     fwrite(entrybuffer, 1, 0x26, rom);

@@ -185,6 +185,7 @@ int main()
   if((names = fopen("Names.txt", "r")) == NULL)
   {
     printf("Error: Missing Names.txt\n"
+    "It should be available to downloaded from the same place you got this randomizer.\n"
     "Press Enter to exit.\n");
     Flushline(stdin);
     return EXIT_FAILURE;
