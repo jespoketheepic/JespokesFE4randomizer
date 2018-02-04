@@ -6,7 +6,7 @@ void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting
 {
   int skillcount = (skillsetting - 0x30);
   /* There are 14 skills aside from Pursuit, and the number in pursuitsetting corresponds to how many instances of Pursuit to add to the raffle */
-  int optioncount = 14 + (pursuitsetting - 0x30);
+  int optioncount = 14 + pursuitsetting;
   int i;
   
   /* Wipe skills */
@@ -18,7 +18,7 @@ void RandomizeSkills(unsigned char *entrybufferskill, unsigned char skillsetting
   fprintf(log, "Skills: ");
   
   /* If everyone gets pursuit, do that */
-  if(pursuitsetting == '0')
+  if(pursuitsetting == 0)
   {
     entrybufferskill[0] = 2;
     skillcount--;

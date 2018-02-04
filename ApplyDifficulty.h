@@ -19,7 +19,7 @@ void ApplyDifficulty(unsigned char *entrybuffer, int difficulty, int scale)
     do{
       random = rand() % 8;
       
-      /* Let me just futureprove this for difficuties where characters can reach 0% growth */
+      /* Let me just futureprove this for difficulties where characters can reach 0% growth */
       for(k = 0; k < 8; k++)
       {
         if(entrybuffer[k] >= scale)

@@ -2,10 +2,17 @@
 
 void WriteSeliphBlood(FILE *superlog, unsigned char *seliphblood);
 
-
-void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned char *seliphblood, int parent, FILE *superlog)
+/* I must have been drunk when programming this. The formatting has been even worse, half the comments are "This makes sense i swear", and half the things did the opposite of what they were supposed to */
+void SeliphBlood(FILE *rom, int header, unsigned char *parentbloodreal, unsigned char *seliphblood, int parent, FILE *superlog)
 {  
   int random;
+  unsigned char parentblood[4];
+  
+  /* Some stuff could have been better if i made this immediately, but now i NEEDED it, so here it is */
+  parentblood[0] = parentbloodreal[0];
+  parentblood[1] = parentbloodreal[1];
+  parentblood[2] = parentbloodreal[2];
+  parentblood[3] = parentbloodreal[3];
   
   /* Handle Seliph's holy blood while working on his parents */
   /* NOTE: This function is currently the limiting factor on how much holy blood could theorectally be allocated, since it gets stuck if Seliph inherits 9+ holy bloods */
@@ -28,9 +35,9 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
           do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
-          seliphblood[random/4] &= (parentblood[2] >> 6) & 3 /*0000 0011*/ << ((random%4)*2);
+          seliphblood[random/4] &= ((parentblood[2] >> 6) & 3 /*0000 0011*/) << ((random%4)*2);
         }
       }
       if((parentblood[2] & 48 /*0011 0000*/) > 0) /* Blagi */
@@ -38,7 +45,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[2] >> 4) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -47,7 +54,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* Picks out a holy blood Seliph doesn't have yet */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* Picks out a holy blood Seliph doesn't have yet */
           
           seliphblood[random/4] &= ((parentblood[2] >> 2) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -56,7 +63,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[2]) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -65,7 +72,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[3]) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -164,14 +171,26 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         }
       }
         
+      /* All minors */
+      parentblood[2] = (parentblood[2] && 0x55 /*0101 0101*/) | ((parentblood[2] & 0xAA /*1010 1010*/) >> 1);
+      parentblood[3] = (parentblood[3] && 0x55 /*0101 0101*/) | ((parentblood[3] & 0xAA /*1010 1010*/) >> 1);
         
       /* The holy bloods Seliph cant get are randomly relocated */
+      if((parentblood[2] & 192 /*1100 0000*/) > 0) /* Hezul */
+      {
+        do{
+            random = rand() % 8;
+          }
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
+          
+          seliphblood[random/4] &= ((parentblood[2] >> 6) & 3 /*0000 0011*/) << ((random%4)*2);
+      }
       if((parentblood[2] & 48 /*0011 0000*/) > 0) /* Blagi */
       {
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[2] >> 4) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -180,7 +199,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* Picks out a holy blood Seliph doesn't have yet */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* Picks out a holy blood Seliph doesn't have yet */
           
           seliphblood[random/4] &= ((parentblood[2] >> 2) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -189,7 +208,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[2]) & 3 /*0000 0011*/) << ((random%4)*2);
       }
@@ -198,7 +217,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
         do{
             random = rand() % 8;
           }
-          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) == 0);  /* It makes sense i swear */
+          while(((seliphblood[random/4] >> ((random%4)*2)) & 3 /*0000 0011*/) != 0);  /* It makes sense i swear */
           
           seliphblood[random/4] &= ((parentblood[3]) & 3 /*0000 0011*/) << ((random%4)*2);
       }

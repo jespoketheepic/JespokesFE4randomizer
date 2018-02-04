@@ -43,6 +43,26 @@ void SetSettings(Settings *settings)
 
     settings->class = charbuffer;
     
+    do  /* Prompt Troubadour */
+    {
+      printf("\nDo you want a guaranteed Troubadour, so you can be sure to have a healer?\n"
+      "0 for no\n"
+      "1 for Ethlin, who joins earlier, but leaves at a point.\n"
+      "2 for Edain, who joins a bit later, but stays around.\n"
+      "*If you pick either one, Lana/Muirne will remain a cleric in gen 2 as well."
+      "*Whichever one you pick will get Ethlin's Heal staff in their inventory.\n");
+      fscanf(stdin, "%d", &intbuffer);
+      Flushline(stdin);
+    }
+    while(intbuffer < 0 || intbuffer > 2);
+    
+    if(intbuffer == 1)
+      intbuffer = 0x10;
+    else if(intbuffer == 2)
+      intbuffer = 0x16;
+    
+    settings->healer = intbuffer;
+    
     do  /* Prompt promotion */
     {
       printf("\nDo you want randomized promotion? Enter:\n"

@@ -21,7 +21,23 @@ void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybu
     if(settings->class > '0')
     {
       printf("Class");
-      RandomizeClass(&entrybuffer[CLASS], entrybuffer[GENDER], log);
+      /* If there is no healer, or if this is not the healer, proceed normally */
+      if(settings->healer == 0 || (settings->healer > 0 && settings->healer != i))
+      {
+        RandomizeClass(&entrybuffer[CLASS], entrybuffer[GENDER], log);
+      }
+      else
+      {/* if it is the healer, make them a Troubadour */
+        entrybuffer[CLASS] = 0x05;
+        fprintf(log, "Class: Troubadour");
+        /* If Edain is the healer, give her Ethlin's Heal staff */
+        if(settings->healer == 0x16)
+        { 
+          entrybuffer[WEAPON1+1] = 0x62;
+          fseek(rom, 0x3B4EA + 1 + header, SEEK_SET);
+          fputc(0x00, rom);
+        }
+      }
       MatchWeapon(rom, header, entrybuffer[CLASS], entrybuffer[WEAPON1], spareweapons);
     }
     /* Go to the randomize promotion function if we want to do that, OR if classes were changed and the promotions need to match! */
@@ -63,6 +79,7 @@ void RandomizeCharactersG1(FILE *rom, Settings *settings, unsigned char *entrybu
       RandomizeCharacterHolyBlood(&entrybuffer[BLOOD], settings->bloodalloc, log);
       if(i == 0 || i == 15)
       {
+        printf("Seliph");
         SeliphBlood(rom, header, &entrybuffer[BLOOD], seliphblood, i, superlog);
       }
     }

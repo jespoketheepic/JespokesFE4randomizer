@@ -73,6 +73,7 @@ typedef struct Settings
                                 *Classes with multiple "standard" promotions (Mages, Myrmidons) have an even chance for each even on 0
                                 *If you pick option 1, be prepared to get a LOT of Falcon Knights and Paladins 
                                 *For option 1, Master Knight is not included in the regular pool, except for Prince and Princess (Who can still become many other things!), but every character has a 5% chance of becoming a Master Knight. */
+  int healer;
   unsigned char bases;       /* 0 for no, 1 for yes */
   unsigned char growths;     /* 0 for no, 1 for yes */
 /*  unsigned char classbases;*/  /* 0 for no, 1 for yes */
@@ -118,6 +119,7 @@ void RandomizeWeapons(FILE *rom, int header, Weapons *weapons);
 void ApplyDifficulty(unsigned char *entrybuffer, int difficulty, int scale);
 void SwordSkillsPatch(FILE *rom, int header);
 void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned char *seliphblood, int parent, FILE *superlog);
+void KidsMatch(FILE *rom, int header, int i, unsigned char class, unsigned char promo);
 
 
 /* Include functions */
@@ -147,6 +149,7 @@ void SeliphBlood(FILE *rom, int header, unsigned char *parentblood, unsigned cha
 #include "ApplyDifficulty.h"
 #include "SwordSkillsPatch.h"
 #include "SeliphBlood.h"
+#include "KidsMatch.h"
 
 
 int main()

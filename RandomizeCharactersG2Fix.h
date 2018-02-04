@@ -8,7 +8,7 @@ void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entr
 {
   /* Plain char for text */
   unsigned char spareweapons[] = {0,0};
-  unsigned char charbuffer;
+  unsigned char charbuffer, promo;
   char textbuffer[TEXTBUFFERSIZE];
   int i, k;
   /* Offset for skipping over child entries, starts ready to skip Seliph */
@@ -21,6 +21,11 @@ void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entr
     if(i == 3 || i == 17)
     {
       offset += 0x0C;
+    }
+    /* If we are skipping Lana and Muirne, do so */
+    if(i == 15 && settings->healer > 0)
+    {
+      continue;
     }
     
     fseek(rom, CHARACTER + header + offset + (CHARACTERSIZE * FIRSTGEN) + (CHARACTERSIZE * i), SEEK_SET);
@@ -64,7 +69,9 @@ void RandomizeCharactersG2Fix(FILE *rom, Settings *settings, unsigned char *entr
     {
       printf("Promotion");
       /* Remember this has nothing to do with the entrybuffer */
-      RandomizePromotion(rom, header, settings->promotion, log, entrybuffer[CLASS], entrybuffer[GENDER], FIRSTGEN + i + offset/0x0C);
+      promo = RandomizePromotion(rom, header, settings->promotion, log, entrybuffer[CLASS], entrybuffer[GENDER], FIRSTGEN + i + offset/0x0C);
+      /* The kids get the same class/promo as their sub */
+      KidsMatch(rom, header, i, entrybuffer[CLASS], promo);
     }
     if(settings->bases > '0')
     {

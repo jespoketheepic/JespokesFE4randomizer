@@ -8,7 +8,7 @@
 void PrintWeaponRanks(int *weaponrankbuffer, FILE *log);
 
 
-void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsigned char promosetting, FILE *names, FILE *log, FILE *superlog)
+void RandomizeChildClassAndPromo(FILE *rom, int header, unsigned char classsetting, unsigned char promosetting, FILE *names, FILE *log, FILE *superlog)
 {
   unsigned char classbuffer, weaponID, gender;
   unsigned char spareweapons[] = {1,2};
@@ -122,42 +122,25 @@ void RandomizeChildClassAndPromo(FILE *rom, int header, char classsetting, unsig
     PrintWeaponRanks(weaponrankbuffer, superlog);
   }
   
-  
-  /* The rest */
-  printf("The rest\n");
-  for(i = 0; i < VARIABLEKIDCOUNT; i++)
+  if(classsetting == '1')
   {
-    fgets(textbuffer, TEXTBUFFERSIZE, names);
-    fprintf(log, "%s", textbuffer);
-    if(classsetting == '1')
+    /* The rest */
+    printf("The rest\n");
+    for(i = 0; i < VARIABLEKIDCOUNT; i++)
     {
+      fgets(textbuffer, TEXTBUFFERSIZE, names);
+      fprintf(log, "%s", textbuffer);
       fprintf(superlog, "%s", textbuffer);
-    }
-    
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i), SEEK_SET);
-    classbuffer = fgetc(rom);
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 8, SEEK_SET);
-    weaponID = fgetc(rom);
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i) + 7, SEEK_SET);
-    gender = fgetc(rom);    
-    if(classsetting > '0')
-    {
-      RandomizeClass(&classbuffer, gender, log);
-      MatchWeapon(rom, header, classbuffer, weaponID, spareweapons);
-    }
-    RandomizePromotion(rom, header, promosetting, log, classbuffer, gender, FIRSTGEN + 25 + i);
-    fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i), SEEK_SET);
-    fputc(classbuffer, rom);
-    
-    if(classsetting == '1')
-    {
+      
+      fseek(rom, FIRSTKIDCLASSLOC + header + (0x0C * i), SEEK_SET);
+      classbuffer = fgetc(rom);
+
       /* Handle weapon ranks */
       /* We don't need the return value here */
       ClassWeaponRanks(weaponrankbuffer, classbuffer); 
       PrintWeaponRanks(weaponrankbuffer, superlog);
     }
   }
-  
   
   return;
 }

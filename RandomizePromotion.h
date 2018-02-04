@@ -5,7 +5,7 @@ void PromotionFinder(unsigned char *promo, unsigned char class, int mode);
 /* Function that randomizes promotions */
 /* OBS: characternr here is their nr within their generation */ 
 /* Offset for gen 1 is their number, gen 2 is FIRSTGEN + their nr + the offset for skipping kids, and gen 3(kids) it is FIRSTGEN + a number that has to be found manually */
-/* Returns the chosen promotion, a value whose utility has been phased out */
+/* Returns the chosen promotion, a value whose utility was phased out and then reintroduced for the kids */
 unsigned char RandomizePromotion(FILE *rom, int header, unsigned char promosetting, FILE *log, unsigned char class, unsigned char gender, int offset)    
 {
   /* Beware of this function, the character order is freaky */
